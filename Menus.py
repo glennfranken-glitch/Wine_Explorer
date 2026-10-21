@@ -1,5 +1,7 @@
 from rich.console import Console
 from rich.panel import Panel
+from rich.console import Group
+from rich.align import Align
 
 console = Console()
 
@@ -23,6 +25,37 @@ def default_panel(text):
 
     return panel
 
+def show_welcome_screen():
+    """
+    Display the welcome screen.
+
+    Input:
+        None
+
+    Output:
+        None
+    """
+
+    welcome_text = Group(
+        "[bold #D4AF37]Welkom bij Wine Explorer![/]",
+    "",
+    "[#722F37]Leuk dat je met ons meegaat op[/]",
+    "[#722F37]ontdekkingsreis door de wereld van wijn.[/]",
+    "",
+    "[#722F37]Ontdek bijzondere wijnen, leer meer over[/]",
+    "[#722F37]druivenrassen en wijnregio's en leg je eigen[/]",
+    "[#722F37]proefervaringen vast.[/]",
+    "",
+    "[italic #D4AF37]Elke fles vertelt een verhaal.[/]",
+    "[italic #D4AF37]Jouw ontdekking begint hier![/]",
+    "",
+    Align.center(
+        "[dim]Druk op Enter om naar het hoofdmenu te gaan...[/]"
+        ),
+    )
+
+    console.print(default_panel(welcome_text))
+
 def show_main_menu():
     """
     Displays the main menu.
@@ -40,5 +73,5 @@ def show_main_menu():
         "\n"
         "[dim]0. Afsluiten[/]"
     )
-    main_menu = default_panel(menu)
-    console.print(main_menu)
+
+    console.print(default_panel(menu))
