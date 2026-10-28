@@ -25,6 +25,7 @@ def main():
                         match choice:
                             case 1:
                                 #Rood
+                                Menus.menu_selection_grapes("rode")
                                 #Druiven laten zien
                                     #Druif selecteren
                                         #Wijnen met Druif
@@ -34,7 +35,7 @@ def main():
                                 continue
                             case 2:
                                 #Wit
-                                #Druiven laten zien
+                                Menus.menu_selection_grapes("witte")
                                     #Druif selecteren
                                         #Wijnen met Druif
                                             #Wijninformatie
@@ -42,7 +43,7 @@ def main():
                                 continue
                             case 3:
                                 #Rosé
-                                #Druiven laten zien
+                                Menus.menu_selection_grapes("rosé")
                                     #Druif selecteren
                                         #Wijnen met Druif
                                             #Wijninformatie
@@ -50,7 +51,7 @@ def main():
                                 continue
                             case 4:
                                 #Mouserend
-                                #Druiven laten zien
+                                Menus.menu_selection_grapes("mouserende")
                                     #Druif selecteren
                                         #Wijnen met Druif
                                             #Wijninformatie
@@ -61,17 +62,7 @@ def main():
                         continue
                     case 2:
                         #Geuren
-                            # Fruitig: Rode vruchten (kers, aardbei), zwarte vruchten (braam, bes), citrus (citroen, grapefruit), of tropisch fruit (ananas, perzik).
-                            # Floraal (Bloemig): Rozen, viooltjes, kamille, bloesem of vlierbloesem.
-                            # Plantaardig / Groen: Gemaaid gras, groene paprika, munt, eucalyptus of buxus.
-                            # Houtachtig: Cederhout, eikenhout, zaagsel of potloodslijpsel.
-                            # Gekruid / Kruidig: Zwarte peper, vanille, kruidnagel, kaneel of zoethout.
-                            # Etherisch / Zuivel: Boter, gist, briochebrood, yoghurt of vla (vooral bij Chardonnay).
-                            # Dierlijk / Aards: Leder, stalgeur, natte herfstbladeren, paddenstoelen of wild.
-                            # Branderig / Geroosterd: Koffie, cacao, toast, karamel of rook.
-                            # Chemisch / Mineraal: Natte kalk, leisteen, petroleum (typisch voor Riesling) of vuursteen.
-                            # Balsemachtig: Honing, hars of wax
-                                #Vind druiven met het gekozen aroma
+                        Menus.menu_aromas()
                         continue
                     case 3:
                         #Smaken

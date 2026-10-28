@@ -148,6 +148,52 @@ def menu_grapes():
     
     console.print(default_panel(menu))
 
+def menu_selection_grapes(type):
+    global grapes_data
+
+    menu = (
+        f"[bold #D4AF37]1.[/] [#722F37]Lijst met {type} druiven[/]\n"
+        f"[bold #D4AF37]2.[/] [#722F37]Lijst met {type} druiven[/]\n"
+        f"[bold #D4AF37]3.[/] [#722F37]Lijst met {type} druiven[/]\n"
+        f"[bold #D4AF37]4.[/] [#722F37]Lijst met {type} druiven[/]\n"
+        "\n"
+        "[dim]0. Terug[/]"
+    )
+    
+    console.print(default_panel(menu))
+
+def menu_aromas():
+    """
+    Toont de beschikbare geurcategorieën en laat de gebruiker een keuze maken.
+
+    :return: De gekozen geurcategorie.
+    :rtype: str
+    """
+    global flavors_data
+
+    #Haal de gegevens alleen op als flavors_data nog leeg is
+    if not flavors_data:
+        flavors_data = API_vinofyi.get_all_flavors()
+
+    categories = set()
+
+    for flavor in flavors_data:
+        categories.add(flavor["category"])
+
+    table = Table(
+        show_header=False,
+        box=None,
+        padding=(0, 1),
+    )
+
+    table.add_column("Nr.", style="bold #D4AF37", justify="right")
+    table.add_column("Categorie", style="#722F37")
+
+    for number, category in enumerate(sorted(categories), start=1):
+        table.add_row(f"{number}.", category.capitalize())
+
+    console.print(default_panel(table))
+
 def menu_choice():
     """
     returns menu choice in integer.
