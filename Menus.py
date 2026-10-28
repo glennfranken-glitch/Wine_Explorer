@@ -8,6 +8,7 @@ from rich.table import Table
 import API_vinofyi
 
 flavors_data = None
+grapes_data = None
 
 console = Console()
 
@@ -128,6 +129,24 @@ def menu_flavor():
     console.print(default_panel(table))
 
     return categories
+
+def menu_grapes():
+    #check if grapes data is filled if yes do not make API request
+    global grapes_data
+    if grapes_data is None:
+        print("Druiven aan het plukken, kan even duren.")
+        grapes_data = API_vinofyi.get_all_grapes()
+
+    menu = (
+        "[bold #D4AF37]1.[/] [#722F37]Rood[/]\n"
+        "[bold #D4AF37]2.[/] [#722F37]Wit[/]\n"
+        "[bold #D4AF37]3.[/] [#722F37]Rosé[/]\n"
+        "[bold #D4AF37]4.[/] [#722F37]Nouserend[/]\n"
+        "\n"
+        "[dim]0. Terug[/]"
+    )
+    
+    console.print(default_panel(menu))
 
 def menu_choice():
     """

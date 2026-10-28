@@ -17,7 +17,23 @@ base_url = 'https://vinofyi.com'
 
 # API Endpoints
 url_ls_flavors = base_url+'/api/v1/flavors/'
+url_ls_grapes = base_url+'/api/v1/grapes/'
 url_search = base_url+'/api/v1/search/'
+
+def get_all_grapes():
+    url = url_ls_grapes
+    grapes_data = []
+
+    while url:
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+
+        data = response.json()
+        grapes_data.extend(data["results"])
+        
+        url = data["next"]
+
+    return grapes_data
 
 def get_all_flavors():
     url = url_ls_flavors
