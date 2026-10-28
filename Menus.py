@@ -1,7 +1,13 @@
+from ast import Global
+
 from rich.console import Console
 from rich.panel import Panel
 from rich.console import Group
 from rich.align import Align
+from rich.table import Table
+import API_vinofyi
+
+flavors_data = None
 
 console = Console()
 
@@ -75,3 +81,69 @@ def show_main_menu():
     )
 
     console.print(default_panel(menu))
+
+def show_encycl_menu():
+    """
+    Displays the encyclopedie menu.
+
+    Input:
+        None
+
+    Output:
+        Print encyclopedie menu
+    """
+    menu = (
+        "[bold #D4AF37]1.[/] [#722F37]Druiven[/]\n"
+        "[bold #D4AF37]2.[/] [#722F37]Geuren[/]\n"
+        "[bold #D4AF37]3.[/] [#722F37]Smaken[/]\n"
+        "\n"
+        "[dim]0. Afsluiten[/]"
+    )
+
+    console.print(default_panel(menu))
+
+def menu_flavor():
+    #check if flavor data is filled if yes do not make API request
+    global flavors_data
+    if flavors_data is None:
+        flavors_data = API_vinofyi.get_all_flavors()
+
+    categories = set()
+
+    for flavor in flavors_data:
+        categories.add(flavor["category"])
+
+    table = Table(
+        show_header=False,
+        box=None,
+        padding=(0, 1),
+    )
+
+    table.add_column("Nr.", style="bold #D4AF37", justify="right")
+    table.add_column("Categorie", style="#722F37")
+
+    for number, category in enumerate(sorted(categories), start=1):
+        table.add_row(f"{number}.", category.capitalize())
+
+    console.print(default_panel(table))
+
+    return categories
+
+def menu_choice():
+    """
+    returns menu choice in integer.
+
+    Input:
+        None
+
+    Output:
+        choice = integer menu choice
+    """
+    while True:
+        choice = input('Maak een keuze: ')
+
+        if not choice.isdigit():
+            print('Geen geldige keuze, voer een getal in.')
+            continue
+
+        return int(choice)
