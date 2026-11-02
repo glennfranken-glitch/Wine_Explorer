@@ -72,7 +72,22 @@ def main():
                         print(selected_category)                
             case 2:
                 #Wijnhuizen zoeken
+                Menus.menu_wineries()
+                choice = Menus.menu_choice()
+                match choice:
+                    case 1:
                     #Zoeken op naam
+                        search_term = Menus.menu_search_winery()
+
+                        #Zoek wijnhuizen via API
+                        wineries = API_vinofyi.list_wineries()
+
+                        #Zoekresultaten tonen
+                        selected_winery = Menus.menu_winery_results(wineries)
+
+                        if selected_winery is None:
+                            continue
+                    
                         #Zoekterm invoeren
                         #Zoekresultaten tonen
                             #Wijnhuis selecteren
@@ -80,7 +95,10 @@ def main():
                                 #Wijnen van dit wijnhuis
                                     #Wijn selecteren
                                         #Wijninformatie
+
+                    case 2:
                     #Zoeken op land
+                        continue
                         #Land selecteren
                             #Regio selecteren
                                 #Appellaties bekijken
@@ -99,8 +117,9 @@ def main():
                                                     #Wijnen van dit wijnhuis
                                                         #Wijn selecteren
                                                             #Wijninformatie
-                
+                    case 3:
                     #Zoeken op appellatie
+                        continue
                         #Appellatie zoeken of selecteren
                             #Wijnhuizen tonen
                                 #Wijnhuis selecteren
@@ -108,16 +127,18 @@ def main():
                                         #Wijnen van dit wijnhuis
                                             #Wijn selecteren
                                                 #Wijninformatie
-                
+                    case 4:
                     #Random wijnhuis
+                        continue
                         #Willekeurig wijnhuis tonen
                             #Wijnhuisdetails
                                 #Wijnen van dit wijnhuis
                                     #Wijn selecteren
                                         #Wijninformatie
                 
-                # Terug
-                # Hoofdmenu
+                    case 0:
+                    # Hoofdmenu
+                        break
                 continue
             case 3:
                 #Mijn proefnotities

@@ -19,6 +19,8 @@ base_url = 'https://vinofyi.com'
 url_ls_flavors = base_url+'/api/v1/flavors/'
 url_ls_grapes = base_url+'/api/v1/grapes/'
 url_search = base_url+'/api/v1/search/'
+url_wineries = base_url+'/api/v1/wineries/'
+url_countries = base_url+'/api/v1/countries/'
 
 def get_all_grapes():
     url = url_ls_grapes
@@ -67,3 +69,34 @@ def get_flavor_categories():
         url = data["next"]
 
     return sorted(categories)
+
+def search_wineries(search_text):
+    url = url_wineries+f"{search_text}/"
+    response = requests.get(
+        url
+        )
+
+    data = response.json()
+
+    return data
+
+def list_wineries():
+    wineries = set()
+    url = url_wineries
+    response = requests.get(
+        url
+        )
+
+    data = response.json()
+
+    for winery in data["results"]:
+        wineries.add(["name"])
+
+    return wineries
+
+def list_countries():
+    countries = set()
+    url = url_countries
+    response = requests.get(
+        url
+        )

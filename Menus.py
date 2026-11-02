@@ -194,6 +194,97 @@ def menu_aromas():
 
     console.print(default_panel(table))
 
+def menu_wineries():
+    """
+    Displays the winery search menu.
+
+    Input:
+        None
+
+    Output:
+        Print winery search menu
+    """
+
+    menu = (
+        "[bold #D4AF37]1.[/] [#722F37]Zoeken op naam[/]\n"
+        "[bold #D4AF37]2.[/] [#722F37]Zoeken op land[/]\n"
+        "[bold #D4AF37]3.[/] [#722F37]Zoeken op appellatie[/]\n"
+        "[bold #D4AF37]4.[/] [#722F37]Random wijnhuis[/]\n"
+        "\n"
+        "[dim]0. Terug naar hoofdmenu[/]"
+    )
+
+    console.print(default_panel(menu))
+
+def menu_search_winery():
+    """
+    Asks the user for a winery search term.
+
+    Input:
+        None
+
+    Output:
+        search_term = winery name entered by the user
+    """
+
+    console.print(default_panel(
+        "[bold #D4AF37]Zoeken op naam[/]\n\n"
+        "[#722F37]Voer de naam van een wijnhuis in.[/]"
+    ))
+
+    search_term = input("Zoekterm: ").strip()
+
+    return search_term
+
+def menu_winery_results(wineries):
+    """
+    Displays winery search results and lets the user select a winery.
+
+    Input:
+        wineries = list of found wineries
+
+    Output:
+        selected_winery = selected winery
+    """
+
+    table = Table(
+        show_header=False,
+        box=None,
+        padding=(0, 1),
+    )
+
+    table.add_column("Nr.", style="bold #D4AF37", justify="right")
+    table.add_column("Wijnhuis", style="#722F37")
+
+    for number, winery in enumerate(wineries, start=1):
+        table.add_row(f"{number}.", winery["name"])
+
+    console.print(default_panel(table))
+
+    choice = menu_choice()
+
+    if choice == 0:
+        return None
+
+    if choice > len(wineries):
+        console.print("[red]Ongeldige keuze.[/red]")
+        return menu_winery_results(wineries)
+
+    return wineries[choice - 1]
+
+def menu_countries():
+    #
+    menu = (
+        "[bold #D4AF37]1.[/] [#722F37]Nederland[/]\n"
+        "[bold #D4AF37]2.[/] [#722F37]Duitsland[/]\n"
+        "[bold #D4AF37]3.[/] [#722F37]Frankrijk[/]\n"
+        "[bold #D4AF37]4.[/] [#722F37]Italië[/]\n"
+        "\n"
+        "[dim]0. Terug naar hoofdmenu[/]"
+    )
+
+    console.print(default_panel(menu))
+
 def menu_choice():
     """
     returns menu choice in integer.
