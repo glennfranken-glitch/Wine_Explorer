@@ -1,4 +1,6 @@
 import Menus
+import API_vinofyi
+import API_WineAPI
 
 def main():
     #Welcome screen
@@ -59,7 +61,7 @@ def main():
                                 continue
                             case 0:
                                 continue
-                        continue
+                        
                     case 2:
                         #Geuren
                         Menus.menu_aromas()
@@ -72,16 +74,53 @@ def main():
                         print(selected_category)                
             case 2:
                 #Wijnhuizen zoeken
+                Menus.menu_wineries()
+                choice = Menus.menu_choice()
+                match choice:
+                    case 1:
                     #Zoeken op naam
-                        #Zoekterm invoeren
-                        #Zoekresultaten tonen
-                            #Wijnhuis selecteren
-                            #Wijnhuisdetails
-                                #Wijnen van dit wijnhuis
-                                    #Wijn selecteren
-                                        #Wijninformatie
+                        search_term = Menus.menu_search_winery()
+
+                        wineries = API_vinofyi.search_wineries(search_term)
+                        
+                        selected_winery = Menus.menu_winery_results(wineries)
+
+                        if selected_winery is None:
+                            continue
+
+                        winery_details = API_vinofyi.get_winery_details(selected_winery)
+
+                        if winery_details is None:
+                            continue
+
+                        selected_wine = Menus.show_winery_details(winery_details)
+
+                        if selected_wine is None:
+                            continue
+
+                        wine_details = API_vinofyi.get_wine_details(selected_wine["slug"])
+
+                        if wine_details is None:
+                            continue
+
+                        Menus.show_wine_details(wine_details)
+
+                    case 2:
                     #Zoeken op land
-                        #Land selecteren
+                        Menus.menu_countries()
+                        choice = Menus.menu_choice()
+                        
+                        match choice:
+                            case 1:
+                                pass
+                            case 2:
+                                pass
+                            case 3:
+                                pass
+                            case 4:
+                                pass
+                            case 0:
+                                break
                             #Regio selecteren
                                 #Appellaties bekijken
                                     #Appellatie selecteren
@@ -99,8 +138,9 @@ def main():
                                                     #Wijnen van dit wijnhuis
                                                         #Wijn selecteren
                                                             #Wijninformatie
-                
+                    case 3:
                     #Zoeken op appellatie
+                        continue
                         #Appellatie zoeken of selecteren
                             #Wijnhuizen tonen
                                 #Wijnhuis selecteren
@@ -108,18 +148,38 @@ def main():
                                         #Wijnen van dit wijnhuis
                                             #Wijn selecteren
                                                 #Wijninformatie
-                
+                    case 4:
                     #Random wijnhuis
+                        continue
                         #Willekeurig wijnhuis tonen
                             #Wijnhuisdetails
                                 #Wijnen van dit wijnhuis
                                     #Wijn selecteren
                                         #Wijninformatie
                 
-                # Terug
-                # Hoofdmenu
+                    case 0:
+                    # Hoofdmenu
+                        break
                 continue
             case 3:
+                # Wijn zoeken
+                search_term = Menus.menu_search_wine()
+
+                data = API_WineAPI.search_wine(search_term)
+                wines = data["results"]
+
+                if not wines:
+                    print("Geen wijnen gevonden.")
+                    continue
+
+                selected_wine = Menus.menu_wine_results(wines)
+
+                if selected_wine is None:
+                    continue
+
+                Menus.show_wine_details(selected_wine)
+            
+            case 4:
                 #Mijn proefnotities
                     #Mijn gemaakte proefnotities
                         #Overzicht van opgeslagen proefnotities
