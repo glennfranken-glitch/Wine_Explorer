@@ -1,6 +1,7 @@
 import Menus
 import API_vinofyi
 import API_WineAPI
+import random
 
 def main():
     #Welcome screen
@@ -74,8 +75,8 @@ def main():
                         print(selected_category)                
             case 2:
                 #Wijnhuizen zoeken
-                Menus.menu_wineries()
-                choice = Menus.menu_choice()
+                choice = Menus.menu_wineries()
+                
                 match choice:
                     case 1:
                     #Zoeken op naam
@@ -106,56 +107,75 @@ def main():
                         Menus.show_wine_details(wine_details)
 
                     case 2:
-                    #Zoeken op land
-                        Menus.menu_countries()
-                        choice = Menus.menu_choice()
-                        
-                        match choice:
-                            case 1:
-                                pass
-                            case 2:
-                                pass
-                            case 3:
-                                pass
-                            case 4:
-                                pass
-                            case 0:
-                                break
-                            #Regio selecteren
-                                #Appellaties bekijken
-                                    #Appellatie selecteren
-                                        #Wijnhuizen tonen
-                                            #Wijnhuis selecteren
-                                                #Wijnhuisdetails
-                                                    #Wijnen van dit wijnhuis
-                                                        #Wijn selecteren
-                                                            #Wijninformatie
-                
-                                    #Overige wijnen uit deze regio
-                                        #Wijnhuizen tonen
-                                            #Wijnhuis selecteren
-                                                #Wijnhuisdetails
-                                                    #Wijnen van dit wijnhuis
-                                                        #Wijn selecteren
-                                                            #Wijninformatie
+                        # Zoeken op land en regio
+                        country = Menus.menu_countries()
+
+                        if country is not None:
+                            # Regio's ophalen uit de API
+                            regions = API_vinofyi.list_regions(country)
+
+                            if regions:
+                                # Regio laten selecteren
+                                selected_region = Menus.menu_regions(regions)
+
+                                if selected_region is not None:
+                                    wineries = API_vinofyi.search_wineries(
+                                        selected_region["name"]
+                                    )
+
+                                    matching_wineries = []
+
+                                    for winery in wineries:
+                                        winery_details = API_vinofyi.get_winery_details(
+                                            winery
+                                        )
+
+                                        if (
+                                            winery_details
+                                            and winery_details["country"].lower() == country.lower()
+                                            and winery_details["region"].lower()
+                                            == selected_region["name"].lower()
+                                        ):
+                                            matching_wineries.append(winery)
+
+                                    if matching_wineries:
+                                        selected_winery = Menus.menu_winery_results(
+                                            matching_wineries
+                                        )
+
+                                        if selected_winery is not None:
+                                            winery_details = API_vinofyi.get_winery_details(
+                                                selected_winery
+                                            )
+                                            Menus.show_winery_details(winery_details)
+                                    else:
+                                        Menus.console.print(
+                                            "[yellow]Geen wijnhuizen gevonden.[/yellow]"
+                                        )
+                            else:
+                                Menus.console.print(
+                                    "[yellow]Geen regio's gevonden.[/yellow]"
+                                )
+                                            
                     case 3:
-                    #Zoeken op appellatie
-                        continue
-                        #Appellatie zoeken of selecteren
-                            #Wijnhuizen tonen
-                                #Wijnhuis selecteren
-                                    #Wijnhuisdetails
-                                        #Wijnen van dit wijnhuis
-                                            #Wijn selecteren
-                                                #Wijninformatie
-                    case 4:
-                    #Random wijnhuis
-                        continue
-                        #Willekeurig wijnhuis tonen
-                            #Wijnhuisdetails
-                                #Wijnen van dit wijnhuis
-                                    #Wijn selecteren
-                                        #Wijninformatie
+                        # Willekeurig wijnhuis
+                        wineries = API_vinofyi.list_wineries()
+
+                        if wineries:
+                            selected_winery = random.choice(wineries)
+
+                            winery_details = API_vinofyi.get_winery_details(
+                                selected_winery
+                            )
+
+                            selected_wine = Menus.show_winery_details(winery_details)
+
+                            if selected_wine is not None:
+                                wine_details = API_vinofyi.get_wine_details(
+                                    selected_wine["slug"]
+                                )
+                                print(wine_details)
+                                Menus.show_wine_details(wine_details)
                 
                     case 0:
                     # Hoofdmenu

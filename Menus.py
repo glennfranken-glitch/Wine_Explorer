@@ -207,13 +207,13 @@ def menu_wineries():
     menu = (
         "[bold #D4AF37]1.[/] [#722F37]Zoeken op naam[/]\n"
         "[bold #D4AF37]2.[/] [#722F37]Zoeken op land[/]\n"
-        "[bold #D4AF37]3.[/] [#722F37]Zoeken op appellatie[/]\n"
-        "[bold #D4AF37]4.[/] [#722F37]Random wijnhuis[/]\n"
+        "[bold #D4AF37]3.[/] [#722F37]Random wijnhuis[/]\n"
         "\n"
         "[dim]0. Terug naar hoofdmenu[/]"
     )
 
     console.print(default_panel(menu))
+    return menu_choice()
 
 def menu_search_winery():
     """
@@ -247,7 +247,7 @@ def menu_winery_results(wineries):
     """
 
     table = Table(
-        show_header=False,
+        show_header=True,
         box=None,
         padding=(0, 1),
     )
@@ -351,7 +351,14 @@ def show_winery_details(winery):
     return wines[choice - 1]
 
 def menu_countries():
-    """Menu om voorgeselecteerde landen te laten zien"""
+    """Menu om voorgeselecteerde landen te laten zien."""
+    countries = {
+        1: "netherlands",
+        2: "germany",
+        3: "france",
+        4: "italy"
+    }
+
     menu = (
         "[bold #D4AF37]1.[/] [#722F37]Nederland[/]\n"
         "[bold #D4AF37]2.[/] [#722F37]Duitsland[/]\n"
@@ -362,6 +369,49 @@ def menu_countries():
     )
 
     console.print(default_panel(menu))
+    choice = menu_choice()
+
+    if choice == 0:
+        return None
+
+    if choice not in countries:
+        console.print("[red]Ongeldige keuze.[/red]")
+        return menu_countries()
+
+    return countries[choice]
+
+def menu_regions(regions):
+    """Toont regio's en laat de gebruiker er één selecteren."""
+
+    table = Table(
+        show_header=True,
+        box=None,
+        padding=(0, 1),
+    )
+
+    table.add_column("Nr.", style="bold #D4AF37", justify="right")
+    table.add_column("Regio", style="#722F37")
+    table.add_column("Wijnhuizen", justify="right")
+
+    for number, region in enumerate(regions, start=1):
+        table.add_row(
+            f"{number}.",
+            region["name"],
+            str(region["winery_count"])
+        )
+
+    console.print(default_panel(table))
+
+    choice = menu_choice()
+
+    if choice == 0:
+        return None
+
+    if choice > len(regions):
+        console.print("[red]Ongeldige keuze.[/red]")
+        return menu_regions(regions)
+
+    return regions[choice - 1]
 
 def menu_wine_results(wines):
     """
@@ -444,12 +494,30 @@ def show_wine_details(wine):
         "Wijnhuis",
         wine.get("winery", {}).get("name", "-")
     )
-    table.add_row("Type", wine.get("type", "-"))
+    table.add_row("Type", wine.get("wine_type", "-"))
     table.add_row("Regio", wine.get("region", "-"))
     table.add_row("Land", wine.get("country", "-"))
     table.add_row("Jaargang", str(wine.get("vintage") or "-"))
-    table.add_row("Gemiddelde beoordeling", str(wine.get("averageRating", "-")))
-    table.add_row("Aantal beoordelingen", str(wine.get("ratingsCount", "-")))
+    table.add_row("Gemiddelde beoordeling", str(wine.get("avg_rating", "-")))
+    table.add_row("Aantal beoordelingen", str(wine.get("rating_count", "-")))
+
+    grapes = wine.get("grapes") or []
+
+    grape_names = []
+
+    for grape in grapes:
+        name = grape.get("name", "-")
+        percentage = grape.get("percentage")
+
+        if percentage is not None:
+            name += f" ({percentage}%)"
+
+        grape_names.append(name)
+
+    table.add_row(
+        "Druivensoorten",
+        ", ".join(grape_names) if grape_names else "-"
+    )
 
     content = Group(
         table,
