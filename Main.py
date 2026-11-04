@@ -83,9 +83,7 @@ def main():
 
                         #Zoek wijnhuizen via API
                         wineries = API_vinofyi.search_wineries(search_term)
-                        for winery in wineries:
-                            print(winery)
-
+                        
                         #Zoekresultaten tonen
                         selected_winery = Menus.menu_winery_results(wineries)
 
@@ -97,8 +95,8 @@ def main():
                         if winery_details is None:
                             continue
 
-                        print(winery_details)
-                    
+                        Menus.show_winery_details(winery_details)
+                                            
                         #Zoekterm invoeren
                         #Zoekresultaten tonen
                             #Wijnhuis selecteren

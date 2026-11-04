@@ -1,5 +1,3 @@
-from ast import Global
-
 from rich.console import Console
 from rich.panel import Panel
 from rich.console import Group
@@ -274,10 +272,77 @@ def menu_winery_results(wineries):
     return wineries[choice - 1]
 
 def show_winery_details(winery):
-    pass
+    """Toont de details van een wijnhuis."""
+
+    table = Table(
+    show_header=False,
+    box=None,
+    padding=(0, 1),
+    )
+
+    table.add_column("Eigenschap", style="bold #D4AF37")
+    table.add_column("Waarde", style="#722F37")
+
+    table.add_row("Naam", winery.get("name", "-"))
+    table.add_row("Land", winery.get("country", "-"))
+    table.add_row("Regio", winery.get("region", "-"))
+    table.add_row("Website", winery.get("website", "-"))
+    table.add_row("Aantal wijnen", str(winery.get("wine_count", 0)))
+
+    description = winery.get("description")
+
+    if description:
+        description_panel = Panel(
+            description,
+            title="[bold #D4AF37]Over het wijnhuis[/bold #D4AF37]",
+            border_style="#722F37",
+            padding=(1, 2),
+        )
+    else:
+        description_panel = None
+
+    wines = winery.get("top_wines", [])
+
+    if wines:
+        wine_table = Table(
+            title="[bold #D4AF37]Wijnen van dit wijnhuis[/bold #D4AF37]",
+            show_header=True,
+            box=None,
+            padding=(0, 1),
+        )
+
+        wine_table.add_column("Nr.", style="bold #D4AF37", justify="right")
+        wine_table.add_column("Wijn", style="#722F37")
+        wine_table.add_column("Type", style="#722F37")
+        wine_table.add_column("Beoordeling", style="#D4AF37", justify="right")
+
+        for number, wine in enumerate(wines, start=1):
+            wine_table.add_row(
+                f"{number}.",
+                wine.get("name", "-"),
+                wine.get("wine_type", "-"),
+                str(wine.get("avg_rating") or "-")
+            )
+
+    content_items = [table]
+
+    if description:
+        content_items.append(description_panel)
+
+    if wines:
+        content_items.append(wine_table)
+
+    content_items.append(
+        Align.center("[dim]Druk op Enter om verder te gaan[/dim]")
+    )
+
+    content = Group(*content_items)
+
+    console.print(default_panel(content))
+    input()
 
 def menu_countries():
-    #
+    """Menu om voorgeselecteerde landen te laten zien"""
     menu = (
         "[bold #D4AF37]1.[/] [#722F37]Nederland[/]\n"
         "[bold #D4AF37]2.[/] [#722F37]Duitsland[/]\n"
