@@ -23,6 +23,7 @@ url_ls_grapes = base_url+'/api/v1/grapes/'
 url_search = base_url+'/api/v1/search/'
 url_wineries = base_url+'/api/v1/wineries/'
 url_countries = base_url+'/api/v1/countries/'
+url_regions = base_url+"/api/v1/regions/"
 
 def get_all_grapes():
     """Haal maximaal vijf pagina's met druiven op uit de API."""
@@ -110,17 +111,19 @@ def search_wineries(search_text):
 
     return wineries
 
-def list_wineries():
-    """Haal maximaal vijf pagina's met wijnhuizen op uit de API."""
+def list_wineries(country=None):
+    """Haal wijnhuizen op, eventueel gefilterd op land."""
     url = url_wineries
     wineries = []
     page_count = 0
 
     while url and page_count < MAX_PAGES:
         response = requests.get(url, timeout=10)
+
         if response.status_code == 429:
             print("Vinofyi heeft tijdelijk te veel verzoeken ontvangen.")
             return []
+
         response.raise_for_status()
 
         data = response.json()
@@ -128,6 +131,12 @@ def list_wineries():
 
         url = data["next"]
         page_count += 1
+
+    if country:
+        wineries = [
+            winery for winery in wineries
+            if winery["country_name"].lower() == country.lower()
+        ]
 
     return wineries
 
@@ -162,26 +171,57 @@ def get_wine_details(slug):
     return response.json()
 
 def list_countries():
-    countries = set()
-    url = url_countries
-    response = requests.get(
-        url
-        )
+    """Haalt de landenlijst op."""
+
+    response = requests.get(url_countries, timeout=10)
+
     if response.status_code == 429:
         print("Vinofyi heeft tijdelijk te veel verzoeken ontvangen.")
-        return []
-    data = response.json()
+        return None
 
-    return data
+    response.raise_for_status()
+
+    return response.json()
 
 def view_country(country):
     url = url_countries
-    response = requests.get(
-        url+f"{country}/"
-        )
+    response = requests.get(url + f"{country}/", timeout=10)
+
     if response.status_code == 429:
         print("Vinofyi heeft tijdelijk te veel verzoeken ontvangen.")
         return []
+    response.raise_for_status()
+
     data = response.json()
 
     return data
+
+def list_regions(country=None):
+    """Haalt regio's op, eventueel gefilterd op land."""
+
+    url = url_regions
+    regions = []
+    page_count = 0
+
+    while url and page_count < MAX_PAGES:
+        response = requests.get(url, timeout=10)
+
+        if response.status_code == 429:
+            print("Vinofyi heeft tijdelijk te veel verzoeken ontvangen.")
+            return []
+
+        response.raise_for_status()
+
+        data = response.json()
+        regions.extend(data["results"])
+
+        url = data["next"]
+        page_count += 1
+
+    if country:
+        regions = [
+            region for region in regions
+            if region["country_name"].lower() == country.lower()
+        ]
+
+    return regions
