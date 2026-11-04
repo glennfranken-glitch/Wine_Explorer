@@ -1,4 +1,6 @@
 import Menus
+import API_vinofyi
+import API_WineAPI
 
 def main():
     #Welcome screen
@@ -59,7 +61,7 @@ def main():
                                 continue
                             case 0:
                                 continue
-                        continue
+                        
                     case 2:
                         #Geuren
                         Menus.menu_aromas()
@@ -103,13 +105,13 @@ def main():
                         
                         match choice:
                             case 1:
-
+                                pass
                             case 2:
-
+                                pass
                             case 3:
-
+                                pass
                             case 4:
-
+                                pass
                             case 0:
                                 break
                             #Regio selecteren

@@ -2,6 +2,8 @@ import requests
 import os
 from dotenv import load_dotenv
 
+MAX_PAGES = 5
+
 # Laad de variabelen uit .env
 load_dotenv()
 
@@ -23,32 +25,38 @@ url_wineries = base_url+'/api/v1/wineries/'
 url_countries = base_url+'/api/v1/countries/'
 
 def get_all_grapes():
+    """Haal maximaal vijf pagina's met druiven op uit de API."""
     url = url_ls_grapes
     grapes_data = []
+    page_count = 0
 
-    while url:
+    while url and page_count < MAX_PAGES:
         response = requests.get(url, timeout=10)
         response.raise_for_status()
 
         data = response.json()
         grapes_data.extend(data["results"])
-        
+
         url = data["next"]
+        page_count += 1
 
     return grapes_data
 
 def get_all_flavors():
+    """Haal maximaal vijf pagina's met smaken op uit de API."""
     url = url_ls_flavors
     flavors_data = []
+    page_count = 0
 
-    while url:
+    while url and page_count < MAX_PAGES:
         response = requests.get(url, timeout=10)
         response.raise_for_status()
 
         data = response.json()
         flavors_data.extend(data["results"])
-        
+
         url = data["next"]
+        page_count += 1
 
     return flavors_data
 
@@ -81,16 +89,20 @@ def search_wineries(search_text):
     return data
 
 def list_wineries():
-    wineries = set()
+    """Haal maximaal vijf pagina's met wijnhuizen op uit de API."""
     url = url_wineries
-    response = requests.get(
-        url
-        )
+    wineries = []
+    page_count = 0
 
-    data = response.json()
+    while url and page_count < MAX_PAGES:
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
 
-    for winery in data["results"]:
-        wineries.add(["name"])
+        data = response.json()
+        wineries.extend(data["results"])
+
+        url = data["next"]
+        page_count += 1
 
     return wineries
 
@@ -113,5 +125,5 @@ def view_country(country):
 
     return data
 
-data = view_country('netherlands')
-print(data)
+wineries = list_wineries()
+print(wineries)
