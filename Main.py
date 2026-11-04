@@ -82,13 +82,22 @@ def main():
                         search_term = Menus.menu_search_winery()
 
                         #Zoek wijnhuizen via API
-                        wineries = API_vinofyi.list_wineries()
+                        wineries = API_vinofyi.search_wineries(search_term)
+                        for winery in wineries:
+                            print(winery)
 
                         #Zoekresultaten tonen
                         selected_winery = Menus.menu_winery_results(wineries)
 
                         if selected_winery is None:
                             continue
+
+                        winery_details = API_vinofyi.get_winery_details(selected_winery)
+
+                        if winery_details is None:
+                            continue
+
+                        print(winery_details)
                     
                         #Zoekterm invoeren
                         #Zoekresultaten tonen
@@ -155,6 +164,24 @@ def main():
                         break
                 continue
             case 3:
+                # Wijn zoeken
+                search_term = Menus.menu_search_wine()
+
+                data = API_WineAPI.search_wine(search_term)
+                wines = data["results"]
+
+                if not wines:
+                    print("Geen wijnen gevonden.")
+                    continue
+
+                selected_wine = Menus.menu_wine_results(wines)
+
+                if selected_wine is None:
+                    continue
+
+                Menus.show_wine_details(selected_wine)
+            
+            case 4:
                 #Mijn proefnotities
                     #Mijn gemaakte proefnotities
                         #Overzicht van opgeslagen proefnotities

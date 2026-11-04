@@ -12,7 +12,7 @@ api_key = os.getenv("VINOFYI_API_KEY")
 
 # Controleer of de sleutel aanwezig is
 if api_key is None:
-	print("API-sleutel ontbreekt.")
+    raise ValueError("API_KEY ontbreekt in het .env-bestand.")
 else:
 	print("API-sleutel is succesvol geladen.")
 base_url = 'https://vinofyi.com'
@@ -32,6 +32,9 @@ def get_all_grapes():
 
     while url and page_count < MAX_PAGES:
         response = requests.get(url, timeout=10)
+        if response.status_code == 429:
+            print("Vinofyi heeft tijdelijk te veel verzoeken ontvangen.")
+            return []
         response.raise_for_status()
 
         data = response.json()
@@ -50,6 +53,9 @@ def get_all_flavors():
 
     while url and page_count < MAX_PAGES:
         response = requests.get(url, timeout=10)
+        if response.status_code == 429:
+            print("Vinofyi heeft tijdelijk te veel verzoeken ontvangen.")
+            return []
         response.raise_for_status()
 
         data = response.json()
@@ -67,6 +73,9 @@ def get_flavor_categories():
 
     while url:
         response = requests.get(url, timeout=10)
+        if response.status_code == 429:
+            print("Vinofyi heeft tijdelijk te veel verzoeken ontvangen.")
+            return []
         response.raise_for_status()
 
         data = response.json()
@@ -79,14 +88,27 @@ def get_flavor_categories():
     return sorted(categories)
 
 def search_wineries(search_text):
-    url = url_wineries+f"{search_text}/"
+    """Zoek wijnhuizen op basis van een zoekterm."""
     response = requests.get(
-        url
-        )
+        url_search,
+        params={"q": search_text},
+        timeout=10
+    )
+
+    if response.status_code == 429:
+        print("Vinofyi heeft tijdelijk te veel verzoeken ontvangen.")
+        return []
+
+    response.raise_for_status()
 
     data = response.json()
 
-    return data
+    wineries = [
+        result for result in data["results"]
+        if result["type"] == "winery"
+    ]
+
+    return wineries
 
 def list_wineries():
     """Haal maximaal vijf pagina's met wijnhuizen op uit de API."""
@@ -96,6 +118,9 @@ def list_wineries():
 
     while url and page_count < MAX_PAGES:
         response = requests.get(url, timeout=10)
+        if response.status_code == 429:
+            print("Vinofyi heeft tijdelijk te veel verzoeken ontvangen.")
+            return []
         response.raise_for_status()
 
         data = response.json()
@@ -106,12 +131,30 @@ def list_wineries():
 
     return wineries
 
+def get_winery_details(winery):
+    """Haalt de details van een wijnhuis op."""
+
+    url = base_url + f"/api/winery/{winery['slug']}/"
+
+    response = requests.get(url, timeout=10)
+
+    if response.status_code == 429:
+        print("Vinofyi heeft tijdelijk te veel verzoeken ontvangen.")
+        return None
+
+    response.raise_for_status()
+
+    return response.json()
+
 def list_countries():
     countries = set()
     url = url_countries
     response = requests.get(
         url
         )
+    if response.status_code == 429:
+        print("Vinofyi heeft tijdelijk te veel verzoeken ontvangen.")
+        return []
     data = response.json()
 
     return data
@@ -121,9 +164,9 @@ def view_country(country):
     response = requests.get(
         url+f"{country}/"
         )
+    if response.status_code == 429:
+        print("Vinofyi heeft tijdelijk te veel verzoeken ontvangen.")
+        return []
     data = response.json()
 
     return data
-
-wineries = list_wineries()
-print(wineries)

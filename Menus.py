@@ -76,7 +76,8 @@ def show_main_menu():
     menu = (
         "[bold #D4AF37]1.[/] [#722F37]Wijnencyclopedie[/]\n"
         "[bold #D4AF37]2.[/] [#722F37]Wijnhuizen zoeken[/]\n"
-        "[bold #D4AF37]3.[/] [#722F37]Mijn proefnotities[/]\n"
+        "[bold #D4AF37]3.[/] [#722F37]Wijn zoeken[/]\n"
+        "[bold #D4AF37]4.[/] [#722F37]Mijn proefnotities[/]\n"
         "\n"
         "[dim]0. Afsluiten[/]"
     )
@@ -272,6 +273,9 @@ def menu_winery_results(wineries):
 
     return wineries[choice - 1]
 
+def show_winery_details(winery):
+    pass
+
 def menu_countries():
     #
     menu = (
@@ -284,6 +288,99 @@ def menu_countries():
     )
 
     console.print(default_panel(menu))
+
+def menu_wine_results(wines):
+    """
+    Displays wine search results and lets the user select a wine.
+
+    Input:
+        wines = list of found wines
+
+    Output:
+        selected_wine = selected wine or None
+    """
+
+    table = Table(
+        show_header=True,
+        box=None,
+        padding=(0, 1),
+    )
+
+    table.add_column("Nr.", style="bold #D4AF37", justify="right")
+    table.add_column("Wijn", style="#722F37")
+    table.add_column("Wijnhuis", style="#722F37")
+    table.add_column("Regio", style="#722F37")
+    table.add_column("Land", style="#722F37")
+    table.add_column("Jaargang", style="#722F37")
+
+    for number, wine in enumerate(wines, start=1):
+        table.add_row(
+            f"{number}.",
+            wine.get("name", "-"),
+            wine.get("winery", "-"),
+            wine.get("region", "-"),
+            wine.get("country", "-"),
+            str(wine.get("vintage") or "-")
+        )
+
+    console.print(default_panel(table))
+
+    choice = menu_choice()
+
+    if choice == 0:
+        return None
+
+    if choice > len(wines):
+        console.print("[red]Ongeldige keuze.[/red]")
+        return menu_wine_results(wines)
+
+    return wines[choice - 1]
+
+def menu_search_wine():
+    """
+    Asks the user to enter a wine search term.
+
+    Output:
+        search_term = entered search term
+    """
+    return console.input("[bold]Zoek een wijn: [/bold]").strip()
+
+def show_wine_details(wine):
+    """
+    Displays information about a selected wine.
+
+    Input:
+        wine = selected wine object
+
+    Output:
+        Displays wine information
+    """
+
+    table = Table(
+        show_header=False,
+        box=None,
+        padding=(0, 1),
+    )
+
+    table.add_column("Eigenschap", style="bold #D4AF37")
+    table.add_column("Waarde", style="#722F37")
+
+    table.add_row("Wijn", wine.get("name", "-"))
+    table.add_row("Wijnhuis", wine.get("winery", "-"))
+    table.add_row("Type", wine.get("type", "-"))
+    table.add_row("Regio", wine.get("region", "-"))
+    table.add_row("Land", wine.get("country", "-"))
+    table.add_row("Jaargang", str(wine.get("vintage") or "-"))
+    table.add_row("Gemiddelde beoordeling", str(wine.get("averageRating", "-")))
+    table.add_row("Aantal beoordelingen", str(wine.get("ratingsCount", "-")))
+
+    content = Group(
+        table,
+        Align.center("[dim]Druk op Enter om verder te gaan[/dim]")
+    )
+
+    console.print(default_panel(content))
+    input()
 
 def menu_choice():
     """
