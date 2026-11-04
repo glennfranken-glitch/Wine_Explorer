@@ -81,10 +81,8 @@ def main():
                     #Zoeken op naam
                         search_term = Menus.menu_search_winery()
 
-                        #Zoek wijnhuizen via API
                         wineries = API_vinofyi.search_wineries(search_term)
                         
-                        #Zoekresultaten tonen
                         selected_winery = Menus.menu_winery_results(wineries)
 
                         if selected_winery is None:
@@ -95,15 +93,17 @@ def main():
                         if winery_details is None:
                             continue
 
-                        Menus.show_winery_details(winery_details)
-                                            
-                        #Zoekterm invoeren
-                        #Zoekresultaten tonen
-                            #Wijnhuis selecteren
-                            #Wijnhuisdetails
-                                #Wijnen van dit wijnhuis
-                                    #Wijn selecteren
-                                        #Wijninformatie
+                        selected_wine = Menus.show_winery_details(winery_details)
+
+                        if selected_wine is None:
+                            continue
+
+                        wine_details = API_vinofyi.get_wine_details(selected_wine["slug"])
+
+                        if wine_details is None:
+                            continue
+
+                        Menus.show_wine_details(wine_details)
 
                     case 2:
                     #Zoeken op land

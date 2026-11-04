@@ -333,13 +333,22 @@ def show_winery_details(winery):
         content_items.append(wine_table)
 
     content_items.append(
-        Align.center("[dim]Druk op Enter om verder te gaan[/dim]")
+        Align.center("[dim]Kies voor 0 om terug te keren naar het Hoofdmenu[/dim]")
     )
 
     content = Group(*content_items)
 
     console.print(default_panel(content))
-    input()
+    choice = menu_choice()
+
+    if choice is None:
+        return None
+
+    if choice > len(wines):
+        console.print("[red]Ongeldige keuze.[/red]")
+        return None
+
+    return wines[choice - 1]
 
 def menu_countries():
     """Menu om voorgeselecteerde landen te laten zien"""
@@ -431,7 +440,10 @@ def show_wine_details(wine):
     table.add_column("Waarde", style="#722F37")
 
     table.add_row("Wijn", wine.get("name", "-"))
-    table.add_row("Wijnhuis", wine.get("winery", "-"))
+    table.add_row(
+        "Wijnhuis",
+        wine.get("winery", {}).get("name", "-")
+    )
     table.add_row("Type", wine.get("type", "-"))
     table.add_row("Regio", wine.get("region", "-"))
     table.add_row("Land", wine.get("country", "-"))

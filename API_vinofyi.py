@@ -146,6 +146,21 @@ def get_winery_details(winery):
 
     return response.json()
 
+def get_wine_details(slug):
+    """Haalt de volledige details van een wijn op."""
+
+    url = base_url+f"/api/wine/{slug}/"
+
+    response = requests.get(url, timeout=10)
+
+    if response.status_code == 429:
+        print("Vinofyi heeft tijdelijk te veel verzoeken ontvangen.")
+        return None
+
+    response.raise_for_status()
+
+    return response.json()
+
 def list_countries():
     countries = set()
     url = url_countries
