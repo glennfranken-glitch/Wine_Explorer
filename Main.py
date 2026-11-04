@@ -98,8 +98,20 @@ def main():
 
                     case 2:
                     #Zoeken op land
-                        continue
-                        #Land selecteren
+                        Menus.menu_countries()
+                        choice = Menus.menu_choice()
+                        
+                        match choice:
+                            case 1:
+
+                            case 2:
+
+                            case 3:
+
+                            case 4:
+
+                            case 0:
+                                break
                             #Regio selecteren
                                 #Appellaties bekijken
                                     #Appellatie selecteren

@@ -100,3 +100,18 @@ def list_countries():
     response = requests.get(
         url
         )
+    data = response.json()
+
+    return data
+
+def view_country(country):
+    url = url_countries
+    response = requests.get(
+        url+f"{country}/"
+        )
+    data = response.json()
+
+    return data
+
+data = view_country('netherlands')
+print(data)
