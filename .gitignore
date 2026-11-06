@@ -22,3 +22,6 @@ __pycache__/
 # Python virtual environment
 .venv/
 env/
+
+# Wine Explorer data
+tasting_notes.json

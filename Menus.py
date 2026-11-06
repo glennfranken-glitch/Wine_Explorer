@@ -852,6 +852,136 @@ def show_wine_details(wine):
     console.print(default_panel(content))
     input()
 
+def menu_tasting_notes(tasting_notes):
+    """
+    Displays saved tasting notes and allows the user to select one.
+
+    Input:
+        tasting_notes = list of saved tasting notes
+
+    Output:
+        Returns the selected tasting note or None.
+    """
+
+    table = Table(
+        show_header=True,
+        box=None,
+        padding=(0, 1)
+    )
+
+    table.add_column("Nr.", style="bold #D4AF37", justify="right")
+    table.add_column("Wijn", style="#722F37")
+    table.add_column("Wijnhuis", style="#722F37")
+    table.add_column("Datum", style="#722F37")
+    table.add_column("Beoordeling", style="#D4AF37")
+
+    for number, note in enumerate(tasting_notes, start=1):
+        table.add_row(
+            f"{number}.",
+            note["wine"]["name"] or "-",
+            note["wine"]["winery"] or "-",
+            note["date"],
+            note["conclusion"]["liked"]
+        )
+
+    content = Group(
+        table,
+        Align.center("[dim]0. Terug naar hoofdmenu[/dim]")
+    )
+
+    console.print(default_panel(content))
+
+    choice = menu_choice()
+
+    if choice == 0:
+        return None
+
+    if choice < 1 or choice > len(tasting_notes):
+        console.print("[red]Ongeldige keuze.[/red]")
+        return menu_tasting_notes(tasting_notes)
+
+    return tasting_notes[choice - 1]
+
+def show_tasting_note_details(tasting_note):
+    """
+    Displays the complete details of a tasting note.
+
+    Input:
+        tasting_note = selected tasting note dictionary
+
+    Output:
+        Displays the tasting note.
+    """
+
+    wine = tasting_note["wine"]
+    appearance = tasting_note["appearance"]
+    aroma = tasting_note["aroma"]
+    taste = tasting_note["taste"]
+    conclusion = tasting_note["conclusion"]
+
+    table = Table(
+        show_header=False,
+        box=None,
+        padding=(0, 1)
+    )
+
+    table.add_column("Eigenschap", style="bold #D4AF37")
+    table.add_column("Waarde", style="#722F37")
+
+    table.add_row("Wijn", wine.get("name") or "-")
+    table.add_row("Wijnhuis", wine.get("winery") or "-")
+    table.add_row("Jaargang", str(wine.get("vintage") or "-"))
+    table.add_row("Datum", tasting_note.get("date", "-"))
+
+    table.add_row("Kleur", appearance.get("color", "-"))
+    table.add_row("Helderheid", appearance.get("clarity", "-"))
+
+    table.add_row("Geurintensiteit", aroma.get("intensity", "-"))
+    table.add_row(
+        "Aroma's",
+        ", ".join(aroma.get("aromas", [])) or "-"
+    )
+
+    table.add_row("Zuren", taste.get("acidity", "-"))
+    table.add_row("Zoetheid", taste.get("sweetness", "-"))
+    table.add_row("Body", taste.get("body", "-"))
+    table.add_row("Tannines", taste.get("tannins", "-"))
+    table.add_row("Geur en smaak", taste.get("aroma_match", "-"))
+
+    table.add_row("Afdronk", conclusion.get("finish", "-"))
+    table.add_row("Balans", conclusion.get("balance", "-"))
+    table.add_row("Wijn lekker?", conclusion.get("liked", "-"))
+    table.add_row("Toelichting", conclusion.get("reason", "-"))
+
+    content = Group(
+        table,
+        Align.center("[dim]Druk op Enter om terug te gaan[/dim]")
+    )
+
+    console.print(default_panel(content))
+    input()
+
+def menu_tasting_notes_main():
+    """
+    Displays the tasting notes menu.
+
+    Output:
+        Returns the selected menu option.
+    """
+
+    menu = (
+        "[bold #D4AF37]1.[/] [#722F37]Nieuwe proefnotitie maken[/]\n"
+        "[bold #D4AF37]2.[/] [#722F37]Proefnotities bekijken[/]\n"
+        "[bold #D4AF37]3.[/] [#722F37]Proefnotitie aanpassen[/]\n"
+        "[bold #D4AF37]4.[/] [#722F37]Proefnotitie verwijderen[/]\n"
+        "\n"
+        "[dim]0. Terug naar hoofdmenu[/]"
+    )
+
+    console.print(default_panel(menu))
+
+    return menu_choice()
+
 def menu_choice():
     """
     returns menu choice in integer.

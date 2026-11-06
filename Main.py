@@ -3,10 +3,7 @@ import API_vinofyi
 import API_WineAPI
 import random
 from requests.exceptions import RequestException
-from pathlib import Path
-
-BASE_DIR = Path(__file__).resolve().parent
-TASTING_NOTES_FILE = BASE_DIR / "tasting_notes.json"
+import Tasting_Notes
 
 def main():
     #Welcome screen
@@ -203,50 +200,29 @@ def main():
                     continue
             
             case 4:
-                #Mijn proefnotities
-                    #Mijn gemaakte proefnotities
-                        #Overzicht van opgeslagen proefnotities
-                        #Proefnotitie selecteren
-                            #Proefnotitie bekijken
-                            #Aanpassen
-                            #Bestaande antwoorden wijzigen
-                            #Wijzigingen opslaan
-                            #Verwijderen
-                            #Verwijderen bevestigen
-                                #Ja: Proefnotitie verwijderen
-                                #Nee: Terug naar proefnotitie
-                            #Wijninformatie bekijken
-                            #Terug naar overzicht
-                    #Nieuwe proefnotitie
-                        #Bestaande wijn zoeken
-                            #Zoekterm invoeren
-                                #Zoekresultaten tonen
-                
-                                    #Geschikte wijn gevonden
-                                        #Wijn selecteren
-                                        #Wijn bevestigen
-                
-                                    #Geen geschikte wijn gevonden
-                                        #Wat wil je doen?
-                                        #Opnieuw zoeken
-                                            #Nieuwe zoekterm invoeren
-                                                #Zoekresultaten tonen
-                
-                                        #Eigen wijnnaam invoeren
-                                            #Wijnnaam invoeren
-                                                #Wijnhuis en jaargang (optioneel)
-                
-                                        #Terug
-                
-                                        #Proefnotitie invullen
-                                            #Vragen beantwoorden
-                                                #Antwoorden controleren
-                                                #Opslaan
-                                                #Bevestiging tonen
-                
-                #Terug
-                #Hoofdmenu
-                continue
+                # Mijn proefnotities
+                try:
+                    while True:
+                        choice = Menus.menu_tasting_notes_main()
+
+                        match choice:
+                            case 1:
+                                Tasting_Notes.create_tasting_note()
+
+                            case 2:
+                                Tasting_Notes.show_tasting_notes()
+
+                            case 3:
+                                Tasting_Notes.edit_tasting_note()
+
+                            case 4:
+                                Tasting_Notes.delete_tasting_note()
+
+                            case 0:
+                                break
+
+                except RequestException:
+                    continue
                 
             case 0:
                 print("Bedankt voor je bezoek!")
