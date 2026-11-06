@@ -141,6 +141,21 @@ def get_all_wines():
 
     return wines_data
 
+def search_wines(search_text):
+    """Zoekt wijnen op basis van een zoekterm."""
+
+    data = API_requests.make_api_request(
+        url_search,
+        params={"q": search_text}
+    )
+
+    wines = [
+        result for result in data["results"]
+        if result["type"] == "wine"
+    ]
+
+    return wines
+
 def get_wine_details(slug):
     """Haalt de details van een wijn op."""
 

@@ -3,6 +3,10 @@ import API_vinofyi
 import API_WineAPI
 import random
 from requests.exceptions import RequestException
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent
+TASTING_NOTES_FILE = BASE_DIR / "tasting_notes.json"
 
 def main():
     #Welcome screen

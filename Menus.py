@@ -453,6 +453,43 @@ def menu_aroma_results(category):
 
     return aromas[choice - 1]
 
+def menu_select_aromas():
+    """
+    Allows the user to select multiple aromas from different categories.
+
+    Output:
+        Returns a list of selected aromas.
+    """
+
+    selected_aromas = []
+
+    while True:
+        category = menu_aromas()
+
+        if category is None:
+            break
+
+        aroma = menu_aroma_results(category)
+
+        if aroma is not None:
+            selected_aromas.append(aroma["name"])
+
+        console.print(
+            "[bold #D4AF37]Wil je nog een aroma toevoegen?[/]"
+        )
+
+        menu = (
+            "[bold #D4AF37]1.[/] [#722F37]Ja[/]\n"
+            "[bold #D4AF37]0.[/] [#722F37]Nee, verdergaan[/]"
+        )
+
+        console.print(default_panel(menu))
+
+        if menu_choice() == 0:
+            break
+
+    return selected_aromas
+
 def show_flavor_details(flavor):
     """
     Displays details of a selected aroma or flavor.
@@ -833,3 +870,39 @@ def menu_choice():
             continue
 
         return int(choice)
+
+def menu_select_option(question, options):
+    """
+    Displays a question with selectable answer options.
+
+    Input:
+        question = question to display
+        options = list of possible answers
+
+    Output:
+        Returns the selected answer or None.
+    """
+
+    menu = "\n".join(
+        f"[bold #D4AF37]{number}.[/] [#722F37]{option}[/]"
+        for number, option in enumerate(options, start=1)
+    )
+
+    content = Group(
+        f"[bold #D4AF37]{question}[/]\n",
+        menu,
+        "\n[dim]0. Terug[/]"
+    )
+
+    console.print(default_panel(content))
+
+    choice = menu_choice()
+
+    if choice == 0:
+        return None
+
+    if choice < 1 or choice > len(options):
+        console.print("[red]Ongeldige keuze.[/red]")
+        return menu_select_option(question, options)
+
+    return options[choice - 1]
