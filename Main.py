@@ -2,6 +2,7 @@ import Menus
 import API_vinofyi
 import API_WineAPI
 import random
+import requests
 
 def main():
     #Welcome screen
@@ -22,57 +23,56 @@ def main():
                 match choice:
                     case 1:
                         #Druiven
-                        Menus.menu_grapes()
-                        choice = Menus.menu_choice()
+                        grape_color = Menus.menu_grapes()
 
-                        match choice:
-                            case 1:
-                                #Rood
-                                Menus.menu_selection_grapes("rode")
-                                #Druiven laten zien
-                                    #Druif selecteren
-                                        #Wijnen met Druif
-                                            #Wijninformatie
-                                                #Wijnhuis informatie
-                                                
-                                continue
-                            case 2:
-                                #Wit
-                                Menus.menu_selection_grapes("witte")
-                                    #Druif selecteren
-                                        #Wijnen met Druif
-                                            #Wijninformatie
-                                                #Wijnhuis informatie
-                                continue
-                            case 3:
-                                #Rosé
-                                Menus.menu_selection_grapes("rosé")
-                                    #Druif selecteren
-                                        #Wijnen met Druif
-                                            #Wijninformatie
-                                                #Wijnhuis informatie
-                                continue
-                            case 4:
-                                #Mouserend
-                                Menus.menu_selection_grapes("mouserende")
-                                    #Druif selecteren
-                                        #Wijnen met Druif
-                                            #Wijninformatie
-                                                #Wijnhuis informatie
-                                continue
-                            case 0:
-                                continue
-                        
+                        if grape_color is not None:
+                            selected_grape = Menus.menu_selection_grapes(grape_color)
+
+                            if selected_grape is not None:
+                                Menus.show_grape_details(selected_grape)
                     case 2:
-                        #Geuren
-                        Menus.menu_aromas()
-                        continue
+                        #Geuren                        
+                        while True:
+                            aroma_category = Menus.menu_aromas()
+
+                            if aroma_category is None:
+                                break
+
+                            while True:
+                                selected_aroma = Menus.menu_aroma_results(
+                                    aroma_category
+                                )
+
+                                if selected_aroma is None:
+                                    break
+
+                                Menus.show_flavor_details(selected_aroma)
                     case 3:
-                        #Smaken
-                        categories = Menus.menu_flavor()
-                        choice = Menus.menu_choice()
-                        selected_category = sorted(categories)[choice - 1]
-                        print(selected_category)                
+                        #Smaken                        
+                        while True:
+                            flavor_category = Menus.menu_flavor()
+
+                            if flavor_category is None:
+                                break
+
+                            flavor_subcategory = Menus.menu_flavor_subcategories(
+                                flavor_category
+                            )
+
+                            if flavor_subcategory is None:
+                                continue
+
+                            while True:
+                                selected_flavor = Menus.menu_flavor_results(
+                                    flavor_category,
+                                    flavor_subcategory
+                                )
+
+                                if selected_flavor is None:
+                                    break
+
+                                Menus.show_flavor_details(selected_flavor)
+                                
             case 2:
                 #Wijnhuizen zoeken
                 choice = Menus.menu_wineries()
@@ -107,15 +107,15 @@ def main():
                         Menus.show_wine_details(wine_details)
 
                     case 2:
-                        # Zoeken op land en regio
+                        #Zoeken op land en regio
                         country = Menus.menu_countries()
 
                         if country is not None:
-                            # Regio's ophalen uit de API
+                            #Regio's ophalen uit de API
                             regions = API_vinofyi.list_regions(country)
 
                             if regions:
-                                # Regio laten selecteren
+                                #Regio laten selecteren
                                 selected_region = Menus.menu_regions(regions)
 
                                 if selected_region is not None:
@@ -158,7 +158,7 @@ def main():
                                 )
                                             
                     case 3:
-                        # Willekeurig wijnhuis
+                        #Willekeurig wijnhuis
                         wineries = API_vinofyi.list_wineries()
 
                         if wineries:
@@ -178,11 +178,11 @@ def main():
                                 Menus.show_wine_details(wine_details)
                 
                     case 0:
-                    # Hoofdmenu
-                        break
+                    #Hoofdmenu
+                        continue
                 continue
             case 3:
-                # Wijn zoeken
+                #Wijn zoeken
                 search_term = Menus.menu_search_wine()
 
                 data = API_WineAPI.search_wine(search_term)

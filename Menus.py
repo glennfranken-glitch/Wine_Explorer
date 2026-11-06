@@ -102,36 +102,19 @@ def show_encycl_menu():
 
     console.print(default_panel(menu))
 
-def menu_flavor():
-    #check if flavor data is filled if yes do not make API request
-    global flavors_data
-    if flavors_data is None:
-        flavors_data = API_vinofyi.get_all_flavors()
-
-    categories = set()
-
-    for flavor in flavors_data:
-        categories.add(flavor["category"])
-
-    table = Table(
-        show_header=False,
-        box=None,
-        padding=(0, 1),
-    )
-
-    table.add_column("Nr.", style="bold #D4AF37", justify="right")
-    table.add_column("Categorie", style="#722F37")
-
-    for number, category in enumerate(sorted(categories), start=1):
-        table.add_row(f"{number}.", category.capitalize())
-
-    console.print(default_panel(table))
-
-    return categories
-
 def menu_grapes():
-    #check if grapes data is filled if yes do not make API request
+    """
+    Displays the grape color selection menu.
+
+    Input:
+        None
+
+    Output:
+        Returns the selected grape color.
+    """
+
     global grapes_data
+
     if grapes_data is None:
         print("Druiven aan het plukken, kan even duren.")
         grapes_data = API_vinofyi.get_all_grapes()
@@ -140,44 +123,258 @@ def menu_grapes():
         "[bold #D4AF37]1.[/] [#722F37]Rood[/]\n"
         "[bold #D4AF37]2.[/] [#722F37]Wit[/]\n"
         "[bold #D4AF37]3.[/] [#722F37]Rosé[/]\n"
-        "[bold #D4AF37]4.[/] [#722F37]Nouserend[/]\n"
         "\n"
         "[dim]0. Terug[/]"
     )
-    
+
     console.print(default_panel(menu))
 
-def menu_selection_grapes(type):
+    choice = menu_choice()
+
+    colors = {
+        1: "red",
+        2: "white",
+        3: "rose"
+    }
+
+    return colors.get(choice)
+
+def menu_selection_grapes(grape_color):
+    """
+    Displays a list of grapes filtered by color.
+
+    Input:
+        grape_color = selected grape color
+
+    Output:
+        Displays matching grapes
+    """
+
     global grapes_data
 
-    menu = (
-        f"[bold #D4AF37]1.[/] [#722F37]Lijst met {type} druiven[/]\n"
-        f"[bold #D4AF37]2.[/] [#722F37]Lijst met {type} druiven[/]\n"
-        f"[bold #D4AF37]3.[/] [#722F37]Lijst met {type} druiven[/]\n"
-        f"[bold #D4AF37]4.[/] [#722F37]Lijst met {type} druiven[/]\n"
-        "\n"
-        "[dim]0. Terug[/]"
+    grapes = [
+        grape for grape in grapes_data
+        if grape["color"] == grape_color
+    ]
+
+    table = Table(
+        show_header=False,
+        box=None,
+        padding=(0, 1),
     )
+
+    table.add_column("Nr.", style="bold #D4AF37", justify="right")
+    table.add_column("Druif", style="#722F37")
+
+    for number, grape in enumerate(grapes, start=1):
+        table.add_row(f"{number}.", grape["name"])
+
+    console.print(default_panel(table))
+
+    choice = menu_choice()
+
+    if choice == 0:
+        return None
+
+    if choice > len(grapes):
+        console.print("[red]Ongeldige keuze.[/red]")
+        return menu_selection_grapes(grape_color)
+
+    return grapes[choice - 1]
+
+def show_grape_details(grape):
+    """
+    Displays information about a selected grape.
+
+    Input:
+        grape = selected grape dictionary
+
+    Output:
+        Displays grape information
+    """
+
+    table = Table(
+        show_header=False,
+        box=None,
+        padding=(0, 1),
+    )
+
+    table.add_column("Eigenschap", style="bold #D4AF37")
+    table.add_column("Waarde", style="#722F37")
+
+    table.add_row("Druif", grape.get("name", "-"))
+    table.add_row("Kleur", grape.get("color", "-").capitalize())
+    table.add_row("Land van oorsprong", grape.get("origin_country_name") or "-")
+    table.add_row("Aantal wijnen", str(grape.get("wine_count", 0)))
+    table.add_row("Beschrijving", grape.get("description") or "-")
+
+    console.print(default_panel(table))
+
+def menu_flavor():
+    """
+    Displays flavor categories and allows the user to select one.
+
+    Input:
+        None
+
+    Output:
+        Returns the selected flavor category.
+    """
+
+    global flavors_data
+
+    if flavors_data is None:
+        flavors_data = API_vinofyi.get_all_flavors()
+
+    categories = sorted({
+        flavor["category"]
+        for flavor in flavors_data
+    })
+
+    table = Table(
+        show_header=False,
+        box=None,
+        padding=(0, 1),
+    )
+
+    table.add_column("Nr.", style="bold #D4AF37", justify="right")
+    table.add_column("Category", style="#722F37")
+
+    for number, category in enumerate(categories, start=1):
+        table.add_row(f"{number}.", category.capitalize())
+
+    console.print(default_panel(table))
+
+    choice = menu_choice()
+
+    if choice == 0:
+        return None
+
+    if choice < 1 or choice > len(categories):
+        console.print("[red]Invalid choice.[/red]")
+        return menu_flavor()
+
+    return categories[choice - 1]
+
+def menu_flavor_subcategories(category):
+    """
+    Displays subcategories belonging to the selected flavor category.
+
+    Input:
+        category = selected flavor category
+
+    Output:
+        Returns the selected subcategory.
+    """
+
+    global flavors_data
+
+    subcategories = sorted({
+        flavor["subcategory"]
+        for flavor in flavors_data
+        if flavor["category"] == category
+    })
+
+    table = Table(
+        show_header=False,
+        box=None,
+        padding=(0, 1),
+    )
+
+    table.add_column("Nr.", style="bold #D4AF37", justify="right")
+    table.add_column("Subcategory", style="#722F37")
+
+    for number, subcategory in enumerate(subcategories, start=1):
+        table.add_row(f"{number}.", subcategory.capitalize())
+
+    content = Group(
+        table,
+        Align.center("[dim]0. Return to categories[/dim]")
+    )
+
+    console.print(default_panel(content))
+
+    choice = menu_choice()
+
+    if choice == 0:
+        return None
+
+    if choice < 1 or choice > len(subcategories):
+        console.print("[red]Invalid choice.[/red]")
+        return menu_flavor_subcategories(category)
+
+    return subcategories[choice - 1]
+
+def menu_flavor_results(category, subcategory):
+    """
+    Displays flavors belonging to the selected category and subcategory.
+
+    Input:
+        category = selected flavor category
+        subcategory = selected flavor subcategory
+
+    Output:
+        Displays matching flavors
+    """
+
+    global flavors_data
+
+    flavors = [
+        flavor for flavor in flavors_data
+        if flavor["category"] == category
+        and flavor["subcategory"] == subcategory
+    ]
+
+    table = Table(
+        show_header=False,
+        box=None,
+        padding=(0, 1),
+    )
+
+    table.add_column("Nr.", style="bold #D4AF37", justify="right")
+    table.add_column("Flavor", style="#722F37")
+
+    for number, flavor in enumerate(flavors, start=1):
+        table.add_row(f"{number}.", flavor["name"])
     
-    console.print(default_panel(menu))
+    content = Group(
+        table,
+        Align.center("[dim]0. Return to main menu[/dim]")
+    )
+
+    console.print(default_panel(content))
+
+    choice = menu_choice()
+
+    if choice == 0:
+        return None
+
+    if choice < 1 or choice > len(flavors):
+        console.print("[red]Invalid choice.[/red]")
+        return menu_flavor_results(category, subcategory)
+
+    return flavors[choice - 1]
 
 def menu_aromas():
     """
-    Toont de beschikbare geurcategorieën en laat de gebruiker een keuze maken.
+    Displays aroma categories and allows the user to select one.
 
-    :return: De gekozen geurcategorie.
-    :rtype: str
+    Input:
+        None
+
+    Output:
+        Returns the selected aroma category.
     """
+
     global flavors_data
 
-    #Haal de gegevens alleen op als flavors_data nog leeg is
-    if not flavors_data:
+    if flavors_data is None:
         flavors_data = API_vinofyi.get_all_flavors()
 
-    categories = set()
-
-    for flavor in flavors_data:
-        categories.add(flavor["category"])
+    categories = sorted({
+        flavor["category"]
+        for flavor in flavors_data
+    })
 
     table = Table(
         show_header=False,
@@ -188,10 +385,101 @@ def menu_aromas():
     table.add_column("Nr.", style="bold #D4AF37", justify="right")
     table.add_column("Categorie", style="#722F37")
 
-    for number, category in enumerate(sorted(categories), start=1):
+    for number, category in enumerate(categories, start=1):
         table.add_row(f"{number}.", category.capitalize())
 
-    console.print(default_panel(table))
+    content = Group(
+        table,
+        Align.center("[dim]0. Return to categories[/dim]")
+    )
+
+    console.print(default_panel(content))
+
+    choice = menu_choice()
+
+    if choice == 0:
+        return None
+
+    if choice < 1 or choice > len(categories):
+        console.print("[red]Ongeldige keuze.[/red]")
+        return menu_aromas()
+
+    return categories[choice - 1]
+
+def menu_aroma_results(category):
+    """
+    Displays aromas belonging to the selected category.
+
+    Input:
+        category = selected aroma category
+
+    Output:
+        Returns the selected aroma dictionary or None.
+    """
+
+    global flavors_data
+
+    aromas = [
+        flavor for flavor in flavors_data
+        if flavor["category"] == category
+    ]
+
+    table = Table(
+        show_header=False,
+        box=None,
+        padding=(0, 1),
+    )
+
+    table.add_column("Nr.", style="bold #D4AF37", justify="right")
+    table.add_column("Aroma", style="#722F37")
+
+    for number, aroma in enumerate(aromas, start=1):
+        table.add_row(f"{number}.", aroma["name"])
+    content = Group(
+        table,
+        Align.center("[dim]0. Return to main menu[/dim]")
+    )
+
+    console.print(default_panel(content))
+
+    choice = menu_choice()
+
+    if choice == 0:
+        return None
+
+    if choice < 1 or choice > len(aromas):
+        console.print("[red]Invalid choice.[/red]")
+        return menu_aroma_results(category)
+
+    return aromas[choice - 1]
+
+def show_flavor_details(flavor):
+    """
+    Displays details of a selected aroma or flavor.
+
+    Input:
+        flavor = selected flavor dictionary
+
+    Output:
+        Returns to the previous menu.
+    """
+
+    content = Group(
+        Align.center(
+            f"[bold #D4AF37]{flavor['name']}[/]"
+        ),
+        Align.center(
+            f"[dim]{flavor['category'].upper()} "
+            f"· {flavor['subcategory'].upper()}[/]"
+        ),
+        flavor.get("description") or "No description available.",
+        Align.center("[dim]Press Enter to go back[/dim]")
+    )
+
+    console.print(default_panel(content))
+    input()
+
+    return True
 
 def menu_wineries():
     """

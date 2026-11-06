@@ -24,6 +24,7 @@ url_search = base_url+'/api/v1/search/'
 url_wineries = base_url+'/api/v1/wineries/'
 url_countries = base_url+'/api/v1/countries/'
 url_regions = base_url+"/api/v1/regions/"
+url_ls_wines = base_url+"/api/v1/wines/"
 
 def get_all_grapes():
     """Haal maximaal vijf pagina's met druiven op uit de API."""
@@ -154,6 +155,30 @@ def get_winery_details(winery):
     response.raise_for_status()
 
     return response.json()
+
+def get_all_wines():
+    """Haalt maximaal vijf pagina's met wijnen op uit de API."""
+
+    url = url_ls_wines
+    wines_data = []
+    page_count = 0
+
+    while url and page_count < MAX_PAGES:
+        response = requests.get(url, timeout=10)
+
+        if response.status_code == 429:
+            print("Vinofyi heeft tijdelijk te veel verzoeken ontvangen.")
+            return []
+
+        response.raise_for_status()
+
+        data = response.json()
+        wines_data.extend(data["results"])
+
+        url = data["next"]
+        page_count += 1
+
+    return wines_data
 
 def get_wine_details(slug):
     """Haalt de volledige details van een wijn op."""
