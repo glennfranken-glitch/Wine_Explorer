@@ -1,5 +1,5 @@
-import requests
 import os
+import API_requests
 from dotenv import load_dotenv
 
 # Laad de variabelen uit .env
@@ -10,35 +10,26 @@ api_key = os.getenv("WINEAPI_API_KEY")
 
 # Controleer of de sleutel aanwezig is
 if api_key is None:
-    raise ValueError("API_KEY ontbreekt in het .env-bestand.")
-else:
-	print("API-sleutel is succesvol geladen.")
+    raise ValueError("WINEAPI_API_KEY ontbreekt in het .env-bestand.")
+
 base_url = 'https://api.wineapi.io'
 
 # API Endpoints
 url_wine_search=base_url+'/wines/search'
 
 def search_wine(wine):
-    """Zoek wijnen op basis van een zoekterm."""
-    response = requests.get(
+    """Zoekt wijnen op basis van een zoekterm."""
+
+    data = API_requests.make_api_request(
         url_wine_search,
-        headers={
-            "X-API-Key": api_key
-        },
         params={
             "q": wine,
             "limit": 20,
             "offset": 0
         },
-        timeout=10
+        headers={
+            "X-API-Key": api_key
+        }
     )
 
-    response.raise_for_status()
-
-    return response.json()
-
-if __name__ == "__main__":
-    data = search_wine("Chardonnay")
-
-    for wine in data["results"]:
-        print(wine["name"])
+    return data

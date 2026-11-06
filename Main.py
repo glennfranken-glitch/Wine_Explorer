@@ -2,7 +2,7 @@ import Menus
 import API_vinofyi
 import API_WineAPI
 import random
-import requests
+from requests.exceptions import RequestException
 
 def main():
     #Welcome screen
@@ -16,188 +16,187 @@ def main():
         
         match choice:
             case 1:
-                #Wijnencyclopedie
-                Menus.show_encycl_menu()
-                choice = Menus.menu_choice()
+                #Wijnencyclopedie                
+                try:
+                    Menus.show_encycl_menu()
+                    choice = Menus.menu_choice()
 
-                match choice:
-                    case 1:
-                        #Druiven
-                        grape_color = Menus.menu_grapes()
+                    match choice:
+                        case 1:
+                            #Druiven
+                            grape_color = Menus.menu_grapes()
 
-                        if grape_color is not None:
-                            selected_grape = Menus.menu_selection_grapes(grape_color)
+                            if grape_color is not None:
+                                selected_grape = Menus.menu_selection_grapes(grape_color)
 
-                            if selected_grape is not None:
-                                Menus.show_grape_details(selected_grape)
-                    case 2:
-                        #Geuren                        
-                        while True:
-                            aroma_category = Menus.menu_aromas()
-
-                            if aroma_category is None:
-                                break
-
+                                if selected_grape is not None:
+                                    Menus.show_grape_details(selected_grape)
+                        case 2:
+                            #Geuren                        
                             while True:
-                                selected_aroma = Menus.menu_aroma_results(
-                                    aroma_category
-                                )
+                                aroma_category = Menus.menu_aromas()
 
-                                if selected_aroma is None:
+                                if aroma_category is None:
                                     break
 
-                                Menus.show_flavor_details(selected_aroma)
-                    case 3:
-                        #Smaken                        
-                        while True:
-                            flavor_category = Menus.menu_flavor()
-
-                            if flavor_category is None:
-                                break
-
-                            flavor_subcategory = Menus.menu_flavor_subcategories(
-                                flavor_category
-                            )
-
-                            if flavor_subcategory is None:
-                                continue
-
-                            while True:
-                                selected_flavor = Menus.menu_flavor_results(
-                                    flavor_category,
-                                    flavor_subcategory
-                                )
-
-                                if selected_flavor is None:
-                                    break
-
-                                Menus.show_flavor_details(selected_flavor)
-                                
-            case 2:
-                #Wijnhuizen zoeken
-                choice = Menus.menu_wineries()
-                
-                match choice:
-                    case 1:
-                    #Zoeken op naam
-                        search_term = Menus.menu_search_winery()
-
-                        wineries = API_vinofyi.search_wineries(search_term)
-                        
-                        selected_winery = Menus.menu_winery_results(wineries)
-
-                        if selected_winery is None:
-                            continue
-
-                        winery_details = API_vinofyi.get_winery_details(selected_winery)
-
-                        if winery_details is None:
-                            continue
-
-                        selected_wine = Menus.show_winery_details(winery_details)
-
-                        if selected_wine is None:
-                            continue
-
-                        wine_details = API_vinofyi.get_wine_details(selected_wine["slug"])
-
-                        if wine_details is None:
-                            continue
-
-                        Menus.show_wine_details(wine_details)
-
-                    case 2:
-                        #Zoeken op land en regio
-                        country = Menus.menu_countries()
-
-                        if country is not None:
-                            #Regio's ophalen uit de API
-                            regions = API_vinofyi.list_regions(country)
-
-                            if regions:
-                                #Regio laten selecteren
-                                selected_region = Menus.menu_regions(regions)
-
-                                if selected_region is not None:
-                                    wineries = API_vinofyi.search_wineries(
-                                        selected_region["name"]
+                                while True:
+                                    selected_aroma = Menus.menu_aroma_results(
+                                        aroma_category
                                     )
 
-                                    matching_wineries = []
+                                    if selected_aroma is None:
+                                        break
 
-                                    for winery in wineries:
-                                        winery_details = API_vinofyi.get_winery_details(
-                                            winery
-                                        )
+                                    Menus.show_flavor_details(selected_aroma)
+                        case 3:
+                            #Smaken                        
+                            while True:
+                                flavor_category = Menus.menu_flavor()
 
-                                        if (
-                                            winery_details
-                                            and winery_details["country"].lower() == country.lower()
-                                            and winery_details["region"].lower()
-                                            == selected_region["name"].lower()
-                                        ):
-                                            matching_wineries.append(winery)
+                                if flavor_category is None:
+                                    break
 
-                                    if matching_wineries:
-                                        selected_winery = Menus.menu_winery_results(
-                                            matching_wineries
-                                        )
-
-                                        if selected_winery is not None:
-                                            winery_details = API_vinofyi.get_winery_details(
-                                                selected_winery
-                                            )
-                                            Menus.show_winery_details(winery_details)
-                                    else:
-                                        Menus.console.print(
-                                            "[yellow]Geen wijnhuizen gevonden.[/yellow]"
-                                        )
-                            else:
-                                Menus.console.print(
-                                    "[yellow]Geen regio's gevonden.[/yellow]"
+                                flavor_subcategory = Menus.menu_flavor_subcategories(
+                                    flavor_category
                                 )
-                                            
-                    case 3:
-                        #Willekeurig wijnhuis
-                        wineries = API_vinofyi.list_wineries()
 
-                        if wineries:
-                            selected_winery = random.choice(wineries)
+                                if flavor_subcategory is None:
+                                    continue
 
-                            winery_details = API_vinofyi.get_winery_details(
-                                selected_winery
-                            )
+                                while True:
+                                    selected_flavor = Menus.menu_flavor_results(
+                                        flavor_category,
+                                        flavor_subcategory
+                                    )
+
+                                    if selected_flavor is None:
+                                        break
+
+                                    Menus.show_flavor_details(selected_flavor)
+                except RequestException:
+                    continue  
+
+            case 2:
+                #Wijnhuizen zoeken
+                try:
+                    choice = Menus.menu_wineries()
+                
+                    match choice:
+                        case 1:
+                        #Zoeken op naam
+                            search_term = Menus.menu_search_winery()
+
+                            wineries = API_vinofyi.search_wineries(search_term)
+                        
+                            selected_winery = Menus.menu_winery_results(wineries)
+
+                            if selected_winery is None:
+                                continue
+
+                            winery_details = API_vinofyi.get_winery_details(selected_winery)
 
                             selected_wine = Menus.show_winery_details(winery_details)
 
-                            if selected_wine is not None:
-                                wine_details = API_vinofyi.get_wine_details(
-                                    selected_wine["slug"]
+                            if selected_wine is None:
+                                continue
+
+                            wine_details = API_vinofyi.get_wine_details(selected_wine["slug"])
+
+                            Menus.show_wine_details(wine_details)
+
+                        case 2:
+                            #Zoeken op land en regio
+                            country = Menus.menu_countries()
+
+                            if country is not None:
+                                #Regio's ophalen uit de API
+                                regions = API_vinofyi.list_regions(country)
+
+                                if regions:
+                                    #Regio laten selecteren
+                                    selected_region = Menus.menu_regions(regions)
+
+                                    if selected_region is not None:
+                                        wineries = API_vinofyi.search_wineries(
+                                            selected_region["name"]
+                                        )
+
+                                        matching_wineries = []
+
+                                        for winery in wineries:
+                                            winery_details = API_vinofyi.get_winery_details(
+                                                winery
+                                            )
+
+                                            if (
+                                                winery_details
+                                                and winery_details["country"].lower() == country.lower()
+                                                and winery_details["region"].lower()
+                                                == selected_region["name"].lower()
+                                            ):
+                                                matching_wineries.append(winery)
+
+                                        if matching_wineries:
+                                            selected_winery = Menus.menu_winery_results(
+                                                matching_wineries
+                                            )
+
+                                            if selected_winery is not None:
+                                                winery_details = API_vinofyi.get_winery_details(
+                                                    selected_winery
+                                                )
+                                                Menus.show_winery_details(winery_details)
+                                        else:
+                                            Menus.console.print(
+                                                "[yellow]Geen wijnhuizen gevonden.[/yellow]"
+                                            )
+                                else:
+                                    Menus.console.print(
+                                        "[yellow]Geen regio's gevonden.[/yellow]"
+                                    )
+                                            
+                        case 3:
+                            #Willekeurig wijnhuis
+                            wineries = API_vinofyi.list_wineries()
+
+                            if wineries:
+                                selected_winery = random.choice(wineries)
+
+                                winery_details = API_vinofyi.get_winery_details(
+                                    selected_winery
                                 )
-                                print(wine_details)
-                                Menus.show_wine_details(wine_details)
-                
-                    case 0:
-                    #Hoofdmenu
-                        continue
-                continue
+
+                                selected_wine = Menus.show_winery_details(winery_details)
+
+                                if selected_wine is not None:
+                                    wine_details = API_vinofyi.get_wine_details(
+                                        selected_wine["slug"]
+                                    )
+                                    print(wine_details)
+                                    Menus.show_wine_details(wine_details)
+                except RequestException:
+                    continue
+                        
             case 3:
                 #Wijn zoeken
-                search_term = Menus.menu_search_wine()
+                try:
+                    search_term = Menus.menu_search_wine()
 
-                data = API_WineAPI.search_wine(search_term)
-                wines = data["results"]
+                    data = API_WineAPI.search_wine(search_term)
+                    wines = data["results"]
 
-                if not wines:
-                    print("Geen wijnen gevonden.")
+                    if not wines:
+                        print("Geen wijnen gevonden.")
+                        continue
+
+                    selected_wine = Menus.menu_wine_results(wines)
+
+                    if selected_wine is None:
+                        continue
+
+                    Menus.show_wine_details(selected_wine)
+                except RequestException:
                     continue
-
-                selected_wine = Menus.menu_wine_results(wines)
-
-                if selected_wine is None:
-                    continue
-
-                Menus.show_wine_details(selected_wine)
             
             case 4:
                 #Mijn proefnotities
