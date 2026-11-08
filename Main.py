@@ -123,22 +123,26 @@ def main():
                             if country is not None:
                                 #Regio's ophalen uit de API
                                 regions = API_vinofyi.list_regions(country)
-
+                                
                                 if regions:
                                     #Regio laten selecteren
                                     selected_region = Menus.menu_regions(regions)
 
                                     if selected_region is not None:
+                                        print(f"Geselecteerde regio: {selected_region['name']}")
                                         wineries = API_vinofyi.search_wineries(
                                             selected_region["name"]
                                         )
 
                                         matching_wineries = []
 
-                                        for winery in wineries:
+                                        for winery in wineries:                                            
                                             winery_details = API_vinofyi.get_winery_details(
                                                 winery
                                             )
+                                            print(f"Wijnhuis: {winery['name']}")
+                                            print(f"API-land: {winery_details.get('country')}")
+                                            print(f"API-regio: {winery_details.get('region')}")
 
                                             if (
                                                 winery_details

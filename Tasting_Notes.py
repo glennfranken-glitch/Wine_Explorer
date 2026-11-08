@@ -4,7 +4,12 @@ import json
 from datetime import date
 from pathlib import Path
 
+from logger import get_logger
+
+logger = get_logger("tasting_notes")
+
 TASTING_NOTES_FILE = Path(__file__).resolve().parent / "tasting_notes.json"
+
 
 def load_tasting_notes():
     """
@@ -15,11 +20,21 @@ def load_tasting_notes():
         Als het bestand nog niet bestaat, wordt een lege lijst teruggegeven.
     """
 
-    if TASTING_NOTES_FILE.exists():
+    if not TASTING_NOTES_FILE.exists():
+        return []
+
+    try:
         with open(TASTING_NOTES_FILE, "r", encoding="utf-8") as file:
             return json.load(file)
 
-    return []
+    except (OSError, json.JSONDecodeError):
+        logger.exception(
+            "Fout bij het lezen van proefnotities uit %s",
+            TASTING_NOTES_FILE
+        )
+        raise
+
+
 
 def save_tasting_notes(tasting_notes):
     """
@@ -29,8 +44,16 @@ def save_tasting_notes(tasting_notes):
         tasting_notes = lijst met proefnotities
     """
 
-    with open(TASTING_NOTES_FILE, "w", encoding="utf-8") as file:
-        json.dump(tasting_notes, file, indent=4, ensure_ascii=False)
+    try:
+        with open(TASTING_NOTES_FILE, "w", encoding="utf-8") as file:
+            json.dump(tasting_notes, file, indent=4, ensure_ascii=False)
+
+    except (OSError, TypeError, ValueError):
+        logger.exception(
+            "Fout bij het opslaan van proefnotities in %s",
+            TASTING_NOTES_FILE
+        )
+        raise
 
 def select_wine():
     """
