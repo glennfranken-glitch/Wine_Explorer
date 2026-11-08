@@ -3,7 +3,11 @@ from rich.panel import Panel
 from rich.console import Group
 from rich.align import Align
 from rich.table import Table
+
 import API_vinofyi
+from logger import get_logger
+
+logger = get_logger("menus")
 
 flavors_data = None
 grapes_data = None
@@ -984,18 +988,22 @@ def menu_tasting_notes_main():
 
 def menu_choice():
     """
-    returns menu choice in integer.
+    Returns the user's menu choice as an integer.
 
     Input:
         None
 
     Output:
-        choice = integer menu choice
+        Returns the selected menu choice.
     """
     while True:
         choice = input('Maak een keuze: ')
 
         if not choice.isdigit():
+            logger.warning(
+                "Ongeldige menu-invoer ontvangen: %s",
+                choice
+            )
             print('Geen geldige keuze, voer een getal in.')
             continue
 
