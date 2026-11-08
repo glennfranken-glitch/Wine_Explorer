@@ -815,10 +815,10 @@ def show_wine_details(wine):
     table.add_column("Waarde", style="#722F37")
 
     table.add_row("Wijn", wine.get("name", "-"))
-    table.add_row(
-        "Wijnhuis",
-        wine.get("winery", {}).get("name", "-")
-    )
+    winery = wine.get("winery")
+    if isinstance(winery, dict):
+        winery = winery.get("name", "-")
+    table.add_row("Wijnhuis", winery or "-")
     table.add_row("Type", wine.get("wine_type", "-"))
     table.add_row("Regio", wine.get("region", "-"))
     table.add_row("Land", wine.get("country", "-"))

@@ -26,7 +26,12 @@ url_regions = base_url+"/api/v1/regions/"
 url_ls_wines = base_url+"/api/v1/wines/"
 
 def get_all_grapes():
-    """Haal maximaal vijf pagina's met druiven op uit de API."""
+    """
+    Haalt maximaal vijf pagina's met druiven op uit de Vinofyi API.
+
+    Output:
+        Een lijst met druiven.
+    """
 
     url = url_ls_grapes
     grapes_data = []
@@ -43,7 +48,12 @@ def get_all_grapes():
     return grapes_data
 
 def get_all_flavors():
-    """Haal maximaal vijf pagina's met smaken op uit de API."""
+    """
+    Haalt maximaal vijf pagina's met smaken op uit de Vinofyi API.
+
+    Output:
+        Een lijst met smaken.
+    """
 
     url = url_ls_flavors
     flavors_data = []
@@ -60,7 +70,12 @@ def get_all_flavors():
     return flavors_data
 
 def get_flavor_categories():
-    """Haal alle unieke smaakcategorieën op uit de API."""
+    """
+    Haalt de unieke smaakcategorieën op uit de Vinofyi API.
+
+    Output:
+        Een gesorteerde lijst met smaakcategorieën.
+    """
 
     url = url_ls_flavors
     categories = set()
@@ -78,7 +93,15 @@ def get_flavor_categories():
     return sorted(categories)
 
 def search_wineries(search_text):
-    """Zoek wijnhuizen op basis van een zoekterm."""
+    """
+    Zoekt wijnhuizen op basis van een zoekterm.
+
+    Input:
+        search_text = zoekterm voor het wijnhuis
+
+    Output:
+        Een lijst met gevonden wijnhuizen.
+    """
 
     data = API_requests.make_api_request(
         url_search,
@@ -93,7 +116,12 @@ def search_wineries(search_text):
     return wineries
 
 def list_wineries(country=None):
-    """Haal wijnhuizen op, eventueel gefilterd op land."""
+    """
+    Haalt maximaal vijf pagina's met smaken op uit de Vinofyi API.
+
+    Output:
+        Een lijst met smaken.
+    """
 
     url = url_wineries
     wineries = []
@@ -116,7 +144,15 @@ def list_wineries(country=None):
     return wineries
 
 def get_winery_details(winery):
-    """Haalt de details van een wijnhuis op."""
+    """
+    Haalt de details van een geselecteerd wijnhuis op.
+
+    Input:
+        winery = dictionary met gegevens van het wijnhuis
+
+    Output:
+        Een dictionary met de details van het wijnhuis.
+    """
 
     url = base_url + f"/api/winery/{winery['slug']}/"
 
@@ -125,7 +161,12 @@ def get_winery_details(winery):
     return data
 
 def get_all_wines():
-    """Haalt maximaal vijf pagina's met wijnen op uit de API."""
+    """
+    Haalt maximaal vijf pagina's met wijnen op uit de Vinofyi API.
+
+    Output:
+        Een lijst met wijnen.
+    """
 
     url = url_ls_wines
     wines_data = []
@@ -142,7 +183,15 @@ def get_all_wines():
     return wines_data
 
 def search_wines(search_text):
-    """Zoekt wijnen op basis van een zoekterm."""
+    """
+    Zoekt wijnen op basis van een zoekterm.
+
+    Input:
+        search_text = zoekterm voor de wijn
+
+    Output:
+        Een lijst met gevonden wijnen.
+    """
 
     data = API_requests.make_api_request(
         url_search,
@@ -157,7 +206,12 @@ def search_wines(search_text):
     return wines
 
 def get_wine_details(slug):
-    """Haalt de details van een wijn op."""
+    """
+    Haalt maximaal vijf pagina's met smaken op uit de Vinofyi API.
+
+    Output:
+        Een lijst met smaken.
+    """
 
     url = base_url + f"/api/wine/{slug}/"
 
@@ -166,14 +220,24 @@ def get_wine_details(slug):
     return data
 
 def list_countries():
-    """Haalt de beschikbare landen op uit de API."""
+    """
+    Haalt de beschikbare landen op uit de Vinofyi API.
+
+    Output:
+        De response met beschikbare landen.
+    """
 
     data = API_requests.make_api_request(url_countries)
 
     return data
 
 def view_country(country):
-    """Haalt de gegevens van een specifiek land op."""
+    """
+    Haalt maximaal vijf pagina's met smaken op uit de Vinofyi API.
+
+    Output:
+        Een lijst met smaken.
+    """
 
     url = url_countries + f"{country}/"
 
@@ -182,7 +246,15 @@ def view_country(country):
     return data
 
 def list_regions(country=None):
-    """Haalt regio's op, eventueel gefilterd op land."""
+    """
+    Haalt regio's op en filtert deze eventueel op land.
+
+    Input:
+        country = optionele landnaam waarop gefilterd wordt
+
+    Output:
+        Een lijst met regio's.
+    """
 
     url = url_regions
     regions = []

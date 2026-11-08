@@ -1,6 +1,9 @@
 import os
-import API_requests
+
 from dotenv import load_dotenv
+
+import API_requests
+
 
 # Laad de variabelen uit .env
 load_dotenv()
@@ -15,10 +18,19 @@ if api_key is None:
 base_url = 'https://api.wineapi.io'
 
 # API Endpoints
-url_wine_search=base_url+'/wines/search'
+url_wine_search = base_url + '/wines/search'
+
 
 def search_wine(wine):
-    """Zoekt wijnen op basis van een zoekterm."""
+    """
+    Zoekt wijnen op basis van een zoekterm via de WineAPI.
+
+    Input:
+        wine = zoekterm voor de wijn
+
+    Output:
+        De JSON-response met de gevonden wijnen.
+    """
 
     data = API_requests.make_api_request(
         url_wine_search,

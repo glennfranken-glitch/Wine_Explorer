@@ -1,11 +1,22 @@
-import Menus
-import API_vinofyi
-import API_WineAPI
 import random
+
 from requests.exceptions import RequestException
+
+import API_WineAPI
+import API_vinofyi
+import Menus
 import Tasting_Notes
 
 def main():
+    """
+    Start de Wine Explorer applicatie.
+
+    Toont het welkomstscherm en hoofdmenu en verwerkt
+    de keuzes van de gebruiker.
+
+    De gebruiker kan de wijnencyclopedie raadplegen,
+    wijnhuizen en wijnen zoeken en proefnotities beheren.
+    """
     #Welcome screen
     Menus.show_welcome_screen()
     input()
@@ -173,8 +184,7 @@ def main():
                                     wine_details = API_vinofyi.get_wine_details(
                                         selected_wine["slug"]
                                     )
-                                    print(wine_details)
-                                    Menus.show_wine_details(wine_details)
+                                Menus.show_wine_details(wine_details)
                 except RequestException:
                     continue
                         
